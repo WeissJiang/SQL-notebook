@@ -1,0 +1,242 @@
+Column-level syntax: 	Table-level syntax: 	Column-level syntax: 	Table-level syntax: 
+Primary Key: 
+CREATE TABLE EMP ( 
+   EMPLOYEE_ID    NUMBER(6,0)   
+      CONSTRAINT EMP_EMP_ID_PK  
+      PRIMARY KEY, 
+   LAST_NAME      VARCHAR2(25), 
+   SALARY         NUMBER(8,2), 
+   DEPARTMENT_ID  NUMBER(4,0) ); 	
+Check: 
+CREATE TABLE EMP ( 
+   EMPLOYEE_ID    NUMBER(6,0), 
+   LAST_NAME      VARCHAR2(25), 
+   SALARY         NUMBER(8,2)  
+      CONSTRAINT EMP_SALARY_MIN_CK  
+      CHECK (salary > 0), 
+   DEPARTMENT_ID NUMBER(4,0));
+Unique Key: 
+CREATE TABLE EMP ( 
+   EMPLOYEE_ID    NUMBER(6,0), 
+   LAST_NAME      VARCHAR2(25), 
+   EMAIL          VARCHAR2(25)  
+      CONSTRAINT EMP_EMAIL_UK UNIQUE, 
+   SALARY         NUMBER(8,2));
+Foreign Key: 
+CREATE TABLE EMPLOYEES  ( 
+   EMPLOYEE_ID     NUMBER(6,0), 
+   LAST_NAME      VARCHAR2(25), 
+   EMAIL          VARCHAR2(25), 
+   SALARY         NUMBER(8,2), 
+   DEPARTMENT_ID  NUMBER(4,0)  
+      CONSTRAINT EMP_DEPT_FK  REFERENCES DEPARTMENTS  (DEPARTMENT_ID)); 	
+*NOT NULL:
+CREATE TABLE EMP ( 
+  EMPLOYEE_ID    NUMBER(6,0), 
+  LAST_NAME      VARCHAR2(25), 
+  EMAIL          VARCHAR2(25)  
+    CONSTRAINT EMP_EMAIL_NN NOT NULL, 
+  SALARY         NUMBER(8,2)); 	NOT NULL constraints cannot be implemented at table-level. 
+   
+
+Table-level syntax: 
+Primary Key: 
+CREATE TABLE EMP ( 
+    EMPLOYEE_ID    NUMBER(6,0), 
+    LAST_NAME      VARCHAR2(25), 
+    SALARY         NUMBER(8,2), 
+    DEPARTMENT_ID  NUMBER(4,0), 
+    CONSTRAINT EMP_EMP_ID_PK 
+       PRIMARY KEY (EMPLOYEE_ID)); 	
+Check: 
+CREATE TABLE EMP ( 
+   EMPLOYEE_ID    NUMBER(6,0), 
+   LAST_NAME      VARCHAR2(25), 
+   SALARY         NUMBER(8,2), 
+   DEPARTMENT_ID  NUMBER(4,0), 
+   CONSTRAINT EMP_SALARY_MIN_CK  
+      CHECK (salary > 0));
+Unique Key: 
+CREATE TABLE EMP ( 
+   EMPLOYEE_ID    NUMBER(6,0), 
+   LAST_NAME      VARCHAR2(25), 
+   EMAIL          VARCHAR2(25), 
+   SALARY         NUMBER(8,2), 
+   CONSTRAINT EMP_EMAIL_UK
+      UNIQUE (EMAIL)); 	
+Foreign Key: 
+CREATE TABLE EMPLOYEES  ( 
+   EMPLOYEE_ID    NUMBER(6,0), 
+   LAST_NAME      VARCHAR2(25), 
+   EMAIL          VARCHAR2(25), 
+   SALARY         NUMBER(8,2), 
+   DEPARTMENT_ID  NUMBER(4,0), 
+   CONSTRAINT EMP_DEPT_FK  
+      FOREIGN KEY (DEPARTMENT_ID) REFERENCES DEPARTMENTS (DEPARTMENT_ID)); 
+		
+SQL> INSERT INTO customers (customer_id, cust_name, mobile, balance) VALUES (101, ‘Samantha’, ‘0413-739-600’, 65432.12);
+SQL> INSERT INTO customers (customer_id, cust_name, mobile, balance) VALUES (999, ‘Elizabeth’, ‘0421-152-345’, 2468.79);
+SQL> INSERT INTO customers (customer_id, cust_name, mobile, balance) VALUES (267, ‘Zachariah’, ‘0412-456-555’, 12963.41);
+SQL> INSERT INTO customers (customer_id, cust_name, mobile, balance) VALUES (534, ‘Anastasia’, ‘0411-555-753’, 6301.22);
+Drop the Customers table with the following command:
+DROP TABLE Customers CASCADE CONSTRAINTS;
+Modify your CREATE TABLE command and include add customer_ID as the Primary Key.
+Modify your CREATE TABLE command to ensure that cust_name is mandatory.
+Modify your CREATE TABLE command to ensure that every value in the Mobile column will be different.
+Modify your CREATE TABLE command to ensure that every value in the Balance column will never contain negative values, but still allows zero and NULL.
+CREATE TABLE Customers (customer_id NUMBER(3) CONSTRAINT customers_id_pk PRIMARY KEY, 
+cust_name VARCHAR(9) CONSTRAINT customers_cust_name_nn NOT NULL, 
+mobile VARCHAR(12) CONSTRAINT customers_mobile_uk UNIQUE, 
+balance NUMBER(7,2) CONSTRAINT  customer_balance_ck CHECK (balance>=0));
+Here is a DDL command to create an Orders table. Modify this command so it creates a foreign key link to the Customers table.
+CREATE TABLE orders (order_id NUMBER(3) CONSTRAINT ord_order_id_pk PRIMARY KEY,
+                     order_date DATE,
+                     order_total NUMBER(7,2),
+                     customer_id NUMBER(3) 
+CONSTRAINT ord_cust_fk REFERENCES customers(customer_id));
+CREATE TABLE orders (order_id NUMBER(3) CONSTRAINT ord_order_id_pk PRIMARY KEY,
+                     order_date DATE,
+                     order_total NUMBER(7,2),
+                     customer_id NUMBER(3), 
+                     	CONSTRAINT ord_cust_fk FOREIGN KEY (customer_id) REFERENCES customers(customer_id));
+Create the DEPT table based on the following table instance chart. Name the PK constraint dep_id_pk. 
+Column name	Key Type	Nulls/Unique	FK Table	FK Column	Data type	Length
+DEPT_ID	Primary Key				NUMBER	7
+NAME					VARCHAR	25
+CREATE TABLE dept(dept_id NUMBER(7) CONSTRAINT dep_id_pk PRIMARY KEY,
+                 name VARCHAR(25));
+Create the EMP table based on the following table instance chart.  Name the FK constraint emp_dep_id_FK.
+Column name	Key type	Nulls/Unique	FK Table	FK Column	Data type	Length
+Emp_ID					NUMBER	7
+Last_Name					VARCHAR	25
+First_Name					VARCHAR	25
+Dept_ID			Dept	Dept_ID	NUMBER	7
+CREATE TABLE emp(emp_id NUMBER(7),
+                 last_name VARCHAR(25),
+                 first_name varchar(25),
+                 dept_id NUMBER(7)
+                    CONSTRAINT emp_dep_id_fk REFERENCES dept(dept_id));
+
+
+SELECT *
+FROM empvu80;
+CREATE VIEW empvu80
+AS SELECT employee_id, first_name || ' ' || last_name AS NAME, salary
+FROM employees
+WHERE department_id = 80;
+DROP VIEW empvu80; 
+CREATE OR REPLACE VIEW empvu80 
+AS SELECT employee_id, first_name || ' ' || last_name AS NAME, salary*12 AS "Ann Salary"  
+FROM employees
+WHERE department_id = 80;
+DELETE FROM empvu80
+WHERE employee_id = 199;
+ROLLBACK
+UPDATE empvu80
+SET salary = 9000
+WHERE employee_id = 199;   
+-- (×) if salary AS "Ann Salary", then "SALARY" is a invalid identifier
+UPDATE empvu80
+SET "Ann Salary" = 9000
+WHERE employee_id = 199;     --(√)
+UPDATE empvu80
+SET name = 'Michael Matthews'
+WHERE employee_id = 199;          
+--virtual column (name) not allowed here
+CREATE OR REPLACE VIEW empvu80
+AS SELECT employee_id, first_name, last_name, salary
+FROM employees
+WHERE department_id = 80;
+UPDATE empvu80
+SET last_name = 'Matthews',
+    first_name = 'Michael'
+WHERE employee_id = 199;
+INSERT INTO empvu VALUES (199, 'Andre', 'Wheeley', 9000);      -- (×)
+INSERT INTO employees (employee_id, first_name, last_name, salary)
+VALUES (199, 'Andre', 'Wheeley', 9000); -- (×)
+CREATE OR REPLACE VIEW empvu80 
+AS SELECT  employee_id, first_name, last_name, salary, department_id, email, hire_date, job_id
+FROM employees
+WHERE DEPARTMENT_ID = 80;
+INSERT INTO empvu80 
+VALUES (299, 'Andre', 'Wheeley', 9000, 80, 'AWHEELEY', SYSDATE, 'IT_PROG');
+COMMIT;
+UPDATE employees
+SET department_id = 50
+WHERE employee_id = 199;
+UPDATE empvu80
+SET department_id = 50
+WHERE employee_id = 199;
+ROLLBACK;
+CREATE OR REPLACE VIEW empvu80
+AS SELECT employee_id, first_name, last_name, salary, department_id, email, hire_date, job_id
+FROM employees
+WHERE department_id = 80
+WITH CHECK OPTION CONSTRAINT empvu80_CK;
+UPDATE empvu80
+SET department_id = 50
+WHERE employee_id = 179;
+SELECT ROWNUM, first_name
+FROM employees
+WHERE ROWNUM <= 10
+ORDER BY first_name;
+SELECT ROWNUM, first_name
+FROM (SELECT *
+      FROM employees
+      ORDER BY first_name)
+WHERE ROWNUM <= 10
+ORDER BY first_name;       --变成从字母排序上的前10
+SECTIONS 1
+DROP TABLE A4_Charters CASCADE CONSTRAINTS;
+DROP TABLE A4_Pilots CASCADE CONSTRAINTS;
+DROP TABLE A4_Aircraft CASCADE CONSTRAINTS;
+CREATE TABLE A4_Aircraft
+(aircraft_code VARCHAR(10),
+ aircraft_name VARCHAR(30) CONSTRAINT A4_aircraft_name_NN NOT NULL,
+ engines NUMBER(1,0) CONSTRAINT A4_aircraft_engines_NN NOT NULL,
+ max_passengers NUMBER(3,0),
+ CONSTRAINT A4_aircraft_code_pk PRIMARY KEY (aircraft_code));
+CREATE TABLE A4_Pilots
+(pilot_id NUMBER(6,0),
+ pilot_name VARCHAR(80) CONSTRAINT A4_pilots_name_NN NOT NULL,
+ phone VARCHAR(13),
+ CONSTRAINT A4_pilot_id_pk PRIMARY KEY (pilot_id));
+CREATE TABLE A4_Charters
+(charter_id NUMBER(4,0),
+ charter_date DATE,
+ destination VARCHAR(3),
+ pilot_id NUMBER(6,0),
+ aircraft_id VARCHAR(10),
+ weight NUMBER(3,0),
+ CONSTRAINT A4_charters_pilot_id_fk FOREIGN KEY (pilot_id) REFERENCES A4_Pilots (pilot_id),
+ CONSTRAINT A4_charters_aircraft_id_fk FOREIGN KEY (aircraft_id) REFERENCES  A4_Aircraft (aircraft_code),
+ CONSTRAINT A4_Charters_destination_ck CHECK (LENGTH(destination)=3));
+SELECT   constraint_type, DECODE(constraint_type,'P','PK','R','FK','U','UK','C','CK/NN') AS type, COUNT(constraint_name) AS Constraints
+FROM     user_constraints
+WHERE    table_name IN ('A4_AIRCRAFT','A4_PILOTS','A4_CHARTERS')
+GROUP BY constraint_type, DECODE(constraint_type,'P','PK','R','FK','U','UK','C','CK/NN')
+ORDER BY constraint_type DESC;
+SELECT   constraint_type, SUBSTR(constraint_name, -2) type, constraint_name
+FROM     user_constraints
+WHERE    table_name IN ('A4_AIRCRAFT','A4_PILOTS','A4_CHARTERS')
+ORDER BY constraint_type DESC;
+SECTIONS 2
+SELECT employee_id, first_name, last_name, job_id, salary
+FROM employees
+WHERE job_id = 'IT_PROG';
+CREATE OR REPLACE VIEW it_prog_vu AS
+(SELECT employee_id, first_name, last_name, job_id, salary
+ FROM employees
+ WHERE job_id = 'IT_PROG');
+UPDATE it_prog_vu
+SET salary = 7000
+WHERE first_name = 'Bruce';
+ROLLBACK;
+CREATE OR REPLACE VIEW it_prog_vu AS
+(SELECT employee_id, first_name, last_name, job_id, salary
+ FROM employees
+ WHERE job_id = 'IT_PROG')
+ WITH CHECK OPTION CONSTRAINT it_prog_vu_ck;
+UPDATE it_prog_vu
+SET job_id = 'SA_REP'
+WHERE first_name = 'Bruce';
